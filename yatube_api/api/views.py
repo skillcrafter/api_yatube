@@ -22,14 +22,14 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,
                           IsAuthorOrReadOnlyPermission,
                           )
 
     def get_queryset(self):
-        new_queryset = Comment.objects.filter(post=self.kwargs.get("post_id"))
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+        new_queryset = post.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
